@@ -52,7 +52,7 @@ async def switchAdd(ctx, switch=None, switchType=None):
 @bot.command(name='update')
 async def updateType(ctx, switch, type):
     user, userName = getUsername(ctx)
-    linears = databaseFunctions.updateSwitchType(user, userName, switch, type)
+    linears = databaseFunctions.updateSwitchType(user, switch, type)
     text = returnList(user, linears)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -62,7 +62,7 @@ async def updateType(ctx, switch, type):
 @bot.command(name="linear")
 async def getLinear(ctx):
     user, userName = getUsername(ctx)
-    linears = databaseFunctions.getType(user, userName, "linear")
+    linears = databaseFunctions.getType(user, "linear")
     text = returnList(user, linears)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -71,7 +71,7 @@ async def getLinear(ctx):
 @bot.command(name="unassigned")
 async def getNone(ctx):
     user, userName = getUsername(ctx)
-    switches = databaseFunctions.getType(user, userName, "None")
+    switches = databaseFunctions.getType(user, "None")
     text = returnList(user, switches)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -80,7 +80,7 @@ async def getNone(ctx):
 @bot.command(name="tactile")
 async def getTactile(ctx):
     user, userName = getUsername(ctx)
-    tactile = databaseFunctions.getType(user, userName,"tactile")
+    tactile = databaseFunctions.getType(user,"tactile")
     text = returnList(user, tactile)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -90,7 +90,7 @@ async def getTactile(ctx):
 @bot.command(name="clicky")
 async def getClicky(ctx):
     user, userName = getUsername(ctx)
-    clicky = databaseFunctions.getType(user, userName,"clicky")
+    clicky = databaseFunctions.getType(user,"clicky")
     text = returnList(user, clicky)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -100,7 +100,7 @@ async def getClicky(ctx):
 @bot.command(name="all")
 async def switchReturn(ctx):
     user, userName = getUsername(ctx)
-    switches = databaseFunctions.getAll(user, userName)
+    switches = databaseFunctions.getAll(user)
     text = returnList(userName, switches)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -110,7 +110,7 @@ async def switchReturn(ctx):
 @bot.command(name="remove")
 async def deleteSwitch(ctx, switchName):
     user, userName = getUsername(ctx)
-    removalMessage = databaseFunctions.deleteSwitch(user, userName, switchName)
+    removalMessage = databaseFunctions.deleteSwitch(user, switchName)
 
     text = returnList(userName, removalMessage)
     channel = bot.get_channel(1015931835525627904)
@@ -121,8 +121,8 @@ async def deleteSwitch(ctx, switchName):
 @bot.command(name="DELETE")
 async def switchReturn(ctx):
     user, userName = getUsername(ctx)
-    text = databaseFunctions.deleteAll(user, userName)
-    await ctx.channel.send(text)
+    text = returnList(userName, databaseFunctions.deleteAll(user))
+    await ctx.channel.send(embed=text)
     return
 
 
@@ -130,7 +130,7 @@ async def switchReturn(ctx):
 @bot.command(name="aLink")
 async def switchReturn(ctx, switchName, nameAndlink, link=None):
     user, userName = getUsername(ctx)
-    linkAddResult = databaseFunctions.addLink(user, userName, switchName, nameAndlink, link)
+    linkAddResult = databaseFunctions.addLink(user, switchName, nameAndlink, link)
     text = returnList(userName, linkAddResult)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -149,7 +149,7 @@ async def switchReturn(ctx, switchName, store):
 @bot.command(name="DELETELinks")
 async def switchReturn(ctx, switchName):
     user, userName = getUsername(ctx)
-    linkAddResult = databaseFunctions.deleteLinks(user, userName, switchName)
+    linkAddResult = databaseFunctions.deleteLinks(user, switchName)
     text = returnList(userName, linkAddResult)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)

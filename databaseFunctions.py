@@ -57,7 +57,7 @@ def addSwitch(user, username, switch, type=None):
             return "Already added {0}, but updated type to {1}".format(switch, type)
             
             
-def updateSwitchType(user, username, switch, type):
+def updateSwitchType(user, switch, type):
     checkExistance = check(user, switch)
     if checkExistance == False:
         return ( "{0} has not been added to their list".format(switch))
@@ -73,7 +73,7 @@ def updateSwitchType(user, username, switch, type):
 
 
 
-def getType(user, username, type):
+def getType(user, type):
     switchTypes = ['linear', 'tactile', 'clicky', 'None']
     if type in switchTypes:
         query = """
@@ -85,9 +85,9 @@ def getType(user, username, type):
         cursor.execute(query)
         switches = cursor.fetchall()
         if type == "None":
-            switchList = "Unassigned switches for {0}:\n".format(username)        
+            switchList = "Unassigned switches:\n"    
         else:
-            switchList = "{0} switches for {1}:\n".format(type.capitalize(), username)
+            switchList = "{0} switches:\n".format(type.capitalize())
         for switch in switches:
             switchList =  switchList +" - "+ switch[0]+ "\n"
         
@@ -113,7 +113,7 @@ def getSwitchLinks(user, switch):
     return(formatString)
     
 #Format for shopLink = shop:link or shop link
-def addLink(user, username,  switch, shopLink, link=None):
+def addLink(user,  switch, shopLink, link=None):
     checkExist = check(user, switch)
     if checkExist == False:
         return( "Record for {0} switch does not exist".format(switch))
@@ -160,7 +160,7 @@ def addLink(user, username,  switch, shopLink, link=None):
             
             
 
-def deleteLinks(user, username, switch):
+def deleteLinks(user, switch):
     try:
         query="""
         UPDATE SWITCH 
@@ -226,7 +226,7 @@ def getSwitchShop(user, switch, store):
         return("Switch - {0}\n{1}: {2}".format(switch, store, links))
     
 
-def getAll(user, username):
+def getAll(user):
     #Check existance entries belonging to user
     query = """
     SELECT name, type
@@ -257,7 +257,7 @@ def getAll(user, username):
             
 
         
-def deleteSwitch(user, username,  switch):
+def deleteSwitch(user,  switch):
     deleteQuery = """
     DELETE FROM SWITCH
     WHERE owner='{0}' AND name='{1}';
@@ -272,7 +272,7 @@ def deleteSwitch(user, username,  switch):
         return "{0} switch has not been added.".format(switch)
     
 
-def deleteAll(user, username):
+def deleteAll(user):
     deleteAllQuery = """
     DELETE FROM SWITCH
     WHERE owner='{0}';
