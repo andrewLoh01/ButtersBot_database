@@ -1,10 +1,8 @@
 import discord
 from discord.ext import commands
-from switch import switch
-import switchFunctions
-import getSwitches
 import random
-
+import databaseFunctions 
+import requests
 
 intents = discord.Intents.all()
 TOKEN ='MTAxNTkzMDQ3MTgxNDc5MTIzOQ.GWiF7Y.czzZeWb_hCo5UlUZa4iRiArBW5g4w5xFg1Z-BI'
@@ -27,8 +25,12 @@ async def help(ctx):
         Use `!clicky`  to get all clicky switches\n\
         Use `!all to get all switches`\n\
         Use `!remove` `switch name` `type of switch` will remove the switch. Leaving out `type of switch` will still remove the switch from everywhere\n\
-        Use `!DELETE` to remove all switches\
-        Use `!addLink` `switch name` `storeName:link` to get sale links from vendor"\
+        Use `!DELETE` to remove all switches\n\
+        Use `!aLink` `switch name` `storeName:link` to get sale links from vendor\n\
+        Use `!rLink` `switch name` `storeName` to remove store and link\n\
+        Use `!DELETELinks` to get sale links from vendor\n\
+        Use `!shop` `switch name` `storeName` to get store link from store\n\
+        Use `!check` 'currency' 'amount 'to get exchange rate. Can exclude amount"\
         , color=0xFFFFFF)
     await ctx.send(embed=embed)
     return
@@ -49,8 +51,8 @@ async def switchAdd(ctx, switch=None, switchType=None):
 @bot.command(name="linear")
 async def switchReturn(ctx):
     user, userName = getUsername(ctx)
-    switches = getSwitches.getSwitches(user, "linear")
-    text = returnList(userName, switches)
+    linears = databaseFunctions.getType("linear")
+    text = returnList(userName, linears)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
     return
@@ -59,7 +61,7 @@ async def switchReturn(ctx):
 @bot.command(name="tactile")
 async def switchReturn(ctx):
     user, userName = getUsername(ctx)
-    switches = getSwitches.getSwitches(user, "tactile")
+
     text = returnList(userName, switches)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -69,7 +71,7 @@ async def switchReturn(ctx):
 @bot.command(name="clicky")
 async def switchReturn(ctx):
     user, userName = getUsername(ctx)
-    switches = getSwitches.getSwitches(user, "clicky")
+
     text = returnList(userName, switches)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -79,7 +81,7 @@ async def switchReturn(ctx):
 @bot.command(name="all")
 async def switchReturn(ctx):
     user, userName = getUsername(ctx)
-    switches = getSwitches.getAll(user)
+
     text = returnList(userName, switches)
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
@@ -90,7 +92,7 @@ async def switchReturn(ctx):
 async def deleteSwitch(ctx, switchName):
     user, userName = getUsername(ctx)
     removalMessage = switchFunctions.removeSwitch(user, switchName)
-    switches = getSwitches.getAll(user)
+
     text = returnList(userName, switches)
     await ctx.channel.send(removalMessage)
     channel = bot.get_channel(1015931835525627904)
@@ -134,7 +136,7 @@ async def switchReturn(ctx, switchName):
     await channel.send(embed=text)
     return
 
-@bot.command(name="allLink")
+@bot.command(name="allLinks")
 async def allLinks(ctx, switchName):
     user, userName = getUsername(ctx)
     linkAddResult = switchFunctions.allLinks(user, switchName)
@@ -151,6 +153,21 @@ async def getStore(ctx, switchName, shop):
     channel = bot.get_channel(1015931835525627904)
     await channel.send(embed=text)
     return
+
+@bot.command(name="convert")
+async def usaToNZD(ctx, currency, amount=None):
+    rate = conversionRate(currency.upper())
+    channel = bot.get_channel(1023194596177625128)
+    if amount == None:
+        #1 currency to NZD
+        rate = round(1/rate, 2)
+        await channel.send("$1 {currency} = ${rate} NZD".format(currency = currency.upper(), rate = str(rate)) ) 
+    else:
+        #NZD to currency
+        rate = round(float(amount)/ rate, 2)
+        await channel.send("${amount} {currency} = ${rate} NZD".format(currency = currency.upper(), rate = str(rate))) 
+       
+
 
 
 """
@@ -175,4 +192,12 @@ def returnList(user, switches):
     return embed
 
 
+def conversionRate(country):
+    url = 'https://v6.exchangerate-api.com/v6/87f9ce30a979b0a13acbb218/latest/NZD'
+    response = requests.get(url)
+    data = response.json()["conversion_rates"][country]
+    return data
+
+
 bot.run(TOKEN)
+databaseFunctions
